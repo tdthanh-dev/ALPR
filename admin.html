@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý thẻ xe - Hệ thống quản lý xe</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+        }
+
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-section img {
+            width: 35px;
+            margin-right: 10px;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-name {
+            margin-right: 15px;
+        }
+
+        .logout-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            margin: 0;
+            font-size: 18px;
+            color: #2c3e50;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-row {
+            display: flex;
+            margin: 0 -10px;
+        }
+
+        .form-col {
+            flex: 1;
+            padding: 0 10px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-success {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th,
+        table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        table th {
+            background-color: #f8f9fa;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .action-btns button {
+            margin-right: 5px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background-color: #d4f8e8;
+            color: #1a7a50;
+        }
+
+        .badge-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            width: 50%;
+            max-width: 500px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-header {
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .modal-footer {
+            padding-top: 15px;
+            margin-top: 15px;
+            border-top: 1px solid #eee;
+            text-align: right;
+        }
+
+        .tab-nav {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+        }
+
+        .tab-item.active {
+            border-bottom-color: #3498db;
+            color: #3498db;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .search-section {
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            display: flex;
+        }
+
+        .search-box input {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            margin: 0 5px;
+            padding: 8px 12px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .pagination button.active {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .search-box input[type="date"] {
+            margin-right: 10px;
+            min-width: 150px;
+        }
+
+        .detail-value {
+            padding: 8px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            min-height: 20px;
+        }
+
+        .detail-image {
+            max-width: 100%;
+            margin-top: 5px;
+        }
+
+        .detail-image img {
+            max-width: 100%;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+
+            .form-col {
+                padding: 0;
+                margin-bottom: 15px;
+            }
+
+            .modal-content {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo-section">
+            <img src="https://img.icons8.com/color/96/000000/car-badge.png" alt="Logo">
+            <h1><a href="/">Hệ thống quản lý xe</a></h1>
+        </div>
+        <div class="user-section">
+            <span class="user-name" id="userName">Admin</span>
+            <button class="logout-btn" id="logoutBtn">Đăng xuất</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Quản lý thẻ xe</h2>
+            </div>
+            <div class="card-body">
+                <div class="tab-nav">
+                    <div class="tab-item active" data-tab="cardList">Danh sách thẻ xe</div>
+                    <div class="tab-item" data-tab="newCard">Cấp thẻ mới</div>
+                    <div class="tab-item" data-tab="parkingHistory">Lịch sử bãi đỗ xe</div>
+                </div>
+
+                <div id="alertContainer"></div>
+
+                <div class="tab-content active" id="cardList">
+                    <div class="search-section">
+                        <div class="search-box">
+                            <input type="text" class="form-control" id="searchInput"
+                                placeholder="Tìm kiếm theo biển số, chủ xe...">
+                            <button class="btn btn-primary" id="searchBtn">Tìm kiếm</button>
+                        </div>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Biển số xe</th>
+                                <th>Chủ sở hữu</th>
+                                <th>Loại xe</th>
+                                <th>Ngày cấp</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cardTableBody">
+                            <!-- Dữ liệu sẽ được thêm vào đây từ JavaScript -->
+                        </tbody>
+                    </table>
+
+                    <div class="pagination" id="pagination">
+                        <!-- Phân trang sẽ được thêm vào đây từ JavaScript -->
+                    </div>
+                </div>
+
+                <div class="tab-content" id="newCard">
+                    <form id="newCardForm">
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="licensePlate">Biển số xe *</label>
+                                    <input type="text" id="licensePlate" name="licensePlate" class="form-control"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="vehicleType">Loại xe *</label>
+                                    <select id="vehicleType" name="vehicleType" class="form-control" required>
+                                        <option value="">Chọn loại xe</option>
+                                        <option value="CAR">Ô tô</option>
+                                        <option value="MOTORCYCLE">Xe máy</option>
+                                        <option value="TRUCK">Xe tải</option>
+                                        <option value="OTHER">Khác</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="ownerName">Tên chủ xe *</label>
+                                    <input type="text" id="ownerName" name="ownerName" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="phoneNumber">Số điện thoại</label>
+                                    <input type="tel" id="phoneNumber" name="phoneNumber" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="memberId">Thành viên</label>
+                                    <select id="memberId" name="memberId" class="form-control">
+                                        <option value="">Chọn thành viên</option>
+                                        <!-- Danh sách thành viên sẽ được thêm vào đây -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="isCurrentlyParked">Trạng thái xe</label>
+                                    <select id="isCurrentlyParked" name="isCurrentlyParked" class="form-control">
+                                        <option value="true" selected>Đang trong bãi</option>
+                                        <option value="false">Không trong bãi</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="validFrom">Ngày bắt đầu *</label>
+                                    <input type="date" id="validFrom" name="validFrom" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="validTo">Ngày kết thúc *</label>
+                                    <input type="date" id="validTo" name="validTo" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="notes">Ghi chú</label>
+                                    <textarea id="notes" name="notes" class="form-control"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Lưu thẻ mới</button>
+                            <button type="reset" class="btn btn-secondary">Làm mới</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="tab-content" id="parkingHistory">
+                    <div class="search-section">
+                        <div class="search-box">
+                            <input type="text" class="form-control" id="historySearchInput"
+                                placeholder="Tìm kiếm theo biển số, chủ xe...">
+                            <input type="date" class="form-control" id="historyDateFrom" placeholder="Từ ngày">
+                            <input type="date" class="form-control" id="historyDateTo" placeholder="Đến ngày">
+                            <button class="btn btn-primary" id="historySearchBtn">Tìm kiếm</button>
+                        </div>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Biển số xe</th>
+                                <th>Loại xe</th>
+                                <th>Chủ sở hữu</th>
+                                <th>Thời gian vào</th>
+                                <th>Thời gian ra</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- Dữ liệu sẽ được thêm vào đây từ JavaScript -->
+                        </tbody>
+                    </table>
+
+                    <div class="pagination" id="historyPagination">
+                        <!-- Phân trang sẽ được thêm vào đây từ JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal chỉnh sửa thẻ xe -->
+    <div id="editCardModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Chỉnh sửa thông tin thẻ xe</h3>
+                <span class="close" id="closeEditModal">&times;</span>
+            </div>
+            <form id="editCardForm">
+                <input type="hidden" id="editCardId">
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="editLicensePlate">Biển số xe</label>
+                            <input type="text" class="form-control" id="editLicensePlate" required>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="editVehicleType">Loại xe</label>
+                            <select class="form-control" id="editVehicleType" required>
+                                <option value="CAR">Ô tô</option>
+                                <option value="MOTORCYCLE">Xe máy</option>
+                                <option value="TRUCK">Xe tải</option>
+                                <option value="OTHER">Khác</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="editThanhVien">Thành viên</label>
+                            <select class="form-control" id="editThanhVien">
+                                <option value="">-- Chọn thành viên --</option>
+                                <option value="1">Nguyễn Văn A</option>
+                                <option value="2">Trần Thị B</option>
+                                <option value="3">Lê Văn C</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="editMauSac">Màu sắc</label>
+                            <input type="text" class="form-control" id="editMauSac">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="editOwnerName">Tên chủ xe</label>
+                            <input type="text" class="form-control" id="editOwnerName" required>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="editOwnerPhone">Số điện thoại</label>
+                            <input type="tel" class="form-control" id="editOwnerPhone" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editOwnerAddress">Địa chỉ</label>
+                    <input type="text" class="form-control" id="editOwnerAddress">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="editValidFrom">Thời gian vào</label>
+                            <input type="datetime-local" class="form-control" id="editValidFrom" required>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="editValidTo">Thời gian ra</label>
+                            <input type="datetime-local" class="form-control" id="editValidTo" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editAnhVao">Ảnh vào</label>
+                    <input type="file" class="form-control" id="editAnhVao">
+                    <div id="editAnhVaoPreview" class="mt-2" style="max-width: 200px;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editAnhRa">Ảnh ra</label>
+                    <input type="file" class="form-control" id="editAnhRa">
+                    <div id="editAnhRaPreview" class="mt-2" style="max-width: 200px;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editStatus">Trạng thái</label>
+                    <select class="form-control" id="editStatus" required>
+                        <option value="ACTIVE">Đang hoạt động</option>
+                        <option value="EXPIRED">Đã hoàn thành</option>
+                        <option value="SUSPENDED">Tạm khóa</option>
+                        <option value="CANCELED">Đã hủy</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="editNotes">Ghi chú</label>
+                    <textarea class="form-control" id="editNotes" rows="3"></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelEditBtn">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal xem chi tiết lịch sử -->
+    <div id="historyDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Chi tiết lịch sử bãi đỗ xe</h3>
+                <span class="close" id="closeHistoryModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label>Biển số xe:</label>
+                            <div id="detailLicensePlate" class="detail-value"></div>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label>Loại xe:</label>
+                            <div id="detailVehicleType" class="detail-value"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label>Chủ xe:</label>
+                            <div id="detailOwnerName" class="detail-value"></div>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label>Thành viên:</label>
+                            <div id="detailMemberName" class="detail-value"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label>Thời gian vào:</label>
+                            <div id="detailTimeIn" class="detail-value"></div>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label>Thời gian ra:</label>
+                            <div id="detailTimeOut" class="detail-value"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Thời gian gửi:</label>
+                    <div id="detailParkingDuration" class="detail-value"></div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label>Ảnh vào:</label>
+                            <div id="detailImageIn" class="detail-image"></div>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label>Ảnh ra:</label>
+                            <div id="detailImageOut" class="detail-image"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ghi chú:</label>
+                    <div id="detailNotes" class="detail-value"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="closeDetailBtn">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dữ liệu mẫu cho thẻ xe
+        const sampleCards = [
+            {
+                "id": 1,
+                "licensePlate": "29A-12345",
+                "vehicleType": "CAR",
+                "ownerName": "Nguyễn Văn A",
+                "ownerPhone": "0987654321",
+                "ownerAddress": "Hà Nội",
+                "issueDate": "2023-01-15T00:00:00",
+                "thoi_gian_vao": "2023-01-15T08:30:00",
+                "thoi_gian_ra": "2023-01-15T17:00:00",
+                "status": "ACTIVE",
+                "notes": "Xe công ty",
+                "anh_vao": "car_in_1.jpg",
+                "anh_ra": "car_out_1.jpg",
+                "id_thanh_vien": 1,
+                "mau_sac": "Đỏ",
+                "so_lan_gui": 5
+            },
+            {
+                "id": 2,
+                "licensePlate": "30A-54321",
+                "vehicleType": "MOTORCYCLE",
+                "ownerName": "Trần Thị B",
+                "ownerPhone": "0912345678",
+                "ownerAddress": "Hà Nội",
+                "issueDate": "2023-02-20T00:00:00",
+                "thoi_gian_vao": "2023-02-20T09:15:00",
+                "thoi_gian_ra": "2023-02-20T18:30:00",
+                "status": "ACTIVE",
+                "notes": "",
+                "anh_vao": "bike_in_1.jpg",
+                "anh_ra": "bike_out_1.jpg",
+                "id_thanh_vien": 2,
+                "mau_sac": "Xanh",
+                "so_lan_gui": 3
+            },
+            {
+                "id": 3,
+                "licensePlate": "31A-98765",
+                "vehicleType": "CAR",
+                "ownerName": "Lê Văn C",
+                "ownerPhone": "0923456789",
+                "ownerAddress": "Hà Nội",
+                "issueDate": "2023-03-10T00:00:00",
+                "thoi_gian_vao": "2023-03-10T10:00:00",
+                "thoi_gian_ra": "2023-03-10T16:45:00",
+                "status": "EXPIRED",
+                "notes": "Xe cá nhân",
+                "anh_vao": "car_in_2.jpg",
+                "anh_ra": "car_out_2.jpg",
+                "id_thanh_vien": null,
+                "mau_sac": "Đen",
+                "so_lan_gui": 1
+            },
+            {
+                "id": 4,
+                "licensePlate": "29B-55555",
+                "vehicleType": "TRUCK",
+                "ownerName": "Phạm Thị D",
+                "ownerPhone": "0934567890",
+                "ownerAddress": "Hà Nội",
+                "issueDate": "2023-04-05T00:00:00",
+                "thoi_gian_vao": "2023-04-05T07:45:00",
+                "thoi_gian_ra": "2023-04-05T14:30:00",
+                "status": "SUSPENDED",
+                "notes": "Xe vận chuyển hàng hóa",
+                "anh_vao": "truck_in_1.jpg",
+                "anh_ra": "truck_out_1.jpg",
+                "id_thanh_vien": null,
+                "mau_sac": "Trắng",
+                "so_lan_gui": 2
+            },
+            {
+                "id": 5,
+                "licensePlate": "59U1 473 81",
+                "vehicleType": "CAR",
+                "ownerName": "Hoàng Văn E",
+                "ownerPhone": "0945678901",
+                "ownerAddress": "Hà Nội",
+                "issueDate": "2023-05-12T00:00:00",
+                "thoi_gian_vao": "2023-05-12T11:20:00",
+                "thoi_gian_ra": "2023-05-12T19:15:00",
+                "status": "ACTIVE",
+                "notes": "",
+                "anh_vao": "car_in_3.jpg",
+                "anh_ra": "car_out_3.jpg",
+                "id_thanh_vien": 3,
+                "mau_sac": "Bạc",
+                "so_lan_gui": 7
+            }
+        ];
+
+        // Dữ liệu mẫu cho thành viên
+        const sampleMembers = [
+            {
+                "id": 1,
+                "ho_ten": "Nguyễn Văn A",
+                "so_dien_thoai": "0987654321",
+                "email": "nguyenvana@example.com",
+                "is_active": true
+            },
+            {
+                "id": 2,
+                "ho_ten": "Trần Thị B",
+                "so_dien_thoai": "0912345678",
+                "email": "tranthib@example.com",
+                "is_active": true
+            },
+            {
+                "id": 3,
+                "ho_ten": "Hoàng Văn E",
+                "so_dien_thoai": "0945678901",
+                "email": "hoangvane@example.com",
+                "is_active": true
+            }
+        ];
+
+        // Dữ liệu mẫu cho lịch sử bãi đỗ xe
+        const sampleParkingHistory = [
+            {
+                "id": 1,
+                "card_id": 1,
+                "licensePlate": "29A-12345",
+                "vehicleType": "CAR",
+                "ownerName": "Nguyễn Văn A",
+                "timeIn": "2023-06-10T08:30:00",
+                "timeOut": "2023-06-10T17:15:00",
+                "status": "COMPLETED",
+                "imageIn": "car_in_1.jpg",
+                "imageOut": "car_out_1.jpg",
+                "notes": "Khách hàng thường xuyên",
+                "memberId": 1,
+                "memberName": "Nguyễn Văn A"
+            },
+            {
+                "id": 2,
+                "card_id": 2,
+                "licensePlate": "30A-54321",
+                "vehicleType": "MOTORCYCLE",
+                "ownerName": "Trần Thị B",
+                "timeIn": "2023-06-11T09:10:00",
+                "timeOut": "2023-06-11T18:25:00",
+                "status": "COMPLETED",
+                "imageIn": "bike_in_1.jpg",
+                "imageOut": "bike_out_1.jpg",
+                "notes": "",
+                "memberId": 2,
+                "memberName": "Trần Thị B"
+            },
+            {
+                "id": 3,
+                "card_id": 3,
+                "licensePlate": "31A-98765",
+                "vehicleType": "CAR",
+                "ownerName": "Lê Văn C",
+                "timeIn": "2023-06-12T07:45:00",
+                "timeOut": "2023-06-12T16:30:00",
+                "status": "COMPLETED",
+                "imageIn": "car_in_2.jpg",
+                "imageOut": "car_out_2.jpg",
+                "notes": "",
+                "memberId": null,
+                "memberName": null
+            },
+            {
+                "id": 4,
+                "card_id": 1,
+                "licensePlate": "29A-12345",
+                "vehicleType": "CAR",
+                "ownerName": "Nguyễn Văn A",
+                "timeIn": "2023-06-13T08:15:00",
+                "timeOut": "2023-06-13T17:05:00",
+                "status": "COMPLETED",
+                "imageIn": "car_in_3.jpg",
+                "imageOut": "car_out_3.jpg",
+                "notes": "",
+                "memberId": 1,
+                "memberName": "Nguyễn Văn A"
+            },
+            {
+                "id": 5,
+                "card_id": 4,
+                "licensePlate": "29B-55555",
+                "vehicleType": "TRUCK",
+                "ownerName": "Phạm Thị D",
+                "timeIn": "2023-06-14T06:50:00",
+                "timeOut": "2023-06-14T13:40:00",
+                "status": "COMPLETED",
+                "imageIn": "truck_in_1.jpg",
+                "imageOut": "truck_out_1.jpg",
+                "notes": "Xe vận chuyển hàng",
+                "memberId": null,
+                "memberName": null
+            },
+            {
+                "id": 6,
+                "card_id": 5,
+                "licensePlate": "30B-11111",
+                "vehicleType": "CAR",
+                "ownerName": "Hoàng Văn E",
+                "timeIn": "2023-06-15T10:20:00",
+                "timeOut": null,
+                "status": "IN_PROGRESS",
+                "imageIn": "car_in_4.jpg",
+                "imageOut": null,
+                "notes": "Đang trong bãi",
+                "memberId": 3,
+                "memberName": "Hoàng Văn E"
+            }
+        ];
+
+        // Khởi tạo localStorage nếu chưa có dữ liệu
+        function initLocalStorage() {
+            if (!localStorage.getItem('cards')) {
+                localStorage.setItem('cards', JSON.stringify(sampleCards));
+            }
+            if (!localStorage.getItem('members')) {
+                localStorage.setItem('members', JSON.stringify(sampleMembers));
+            }
+            if (!localStorage.getItem('parkingHistory')) {
+                localStorage.setItem('parkingHistory', JSON.stringify(sampleParkingHistory));
+            }
+            if (!localStorage.getItem('nextCardId')) {
+                localStorage.setItem('nextCardId', '6');
+            }
+            if (!localStorage.getItem('nextHistoryId')) {
+                localStorage.setItem('nextHistoryId', '7');
+            }
+        }
+
+        // Lấy danh sách thẻ xe từ localStorage với phân trang và tìm kiếm
+        function getCardsFromStorage(page = 1, size = 10, searchTerm = '') {
+            const cards = JSON.parse(localStorage.getItem('cards') || '[]');
+
+            // Tìm kiếm
+            let filteredCards = cards;
+            if (searchTerm) {
+                const searchTermLower = searchTerm.toLowerCase();
+                filteredCards = cards.filter(card =>
+                    normalizeLicensePlate(card.licensePlate).toLowerCase().includes(normalizeLicensePlate(searchTermLower)) ||
+                    card.ownerName.toLowerCase().includes(searchTermLower)
+                );
+            }
+
+            // Phân trang
+            const totalElements = filteredCards.length;
+            const totalPages = Math.ceil(totalElements / size);
+            const start = (page - 1) * size;
+            const end = Math.min(start + size, totalElements);
+            const paginatedCards = filteredCards.slice(start, end);
+
+            return {
+                content: paginatedCards,
+                totalElements,
+                totalPages,
+                size,
+                number: page - 1,
+                first: page === 1,
+                last: end >= totalElements
+            };
+        }
+
+        function normalizeLicensePlate(licensePlate) {
+            if (!licensePlate) return '';
+            return licensePlate.toString().replace(/[\s-\.]/g, '').toUpperCase();
+        }
+
+        // Lấy thông tin chi tiết một thẻ xe từ localStorage
+        function getCardById(cardId) {
+            const cards = JSON.parse(localStorage.getItem('cards') || '[]');
+            const card = cards.find(c => c.id === cardId);
+
+            if (card && card.id_thanh_vien) {
+                const members = JSON.parse(localStorage.getItem('members') || '[]');
+                const member = members.find(m => m.id === card.id_thanh_vien);
+                if (member) {
+                    card.thanhVien = member;
+                }
+            }
+
+            return card;
+        }
+
+        // Tạo thẻ xe mới và lưu vào localStorage
+        function createCardInStorage(cardData) {
+            const cards = JSON.parse(localStorage.getItem('cards') || '[]');
+            const nextId = parseInt(localStorage.getItem('nextCardId') || '6');
+
+            const newCard = {
+                id: nextId,
+                licensePlate: cardData.licensePlate,
+                vehicleType: cardData.vehicleType,
+                ownerName: cardData.ownerName,
+                ownerPhone: cardData.ownerPhone,
+                ownerAddress: cardData.ownerAddress,
+                issueDate: new Date().toISOString(),
+                thoi_gian_vao: cardData.validFrom,
+                thoi_gian_ra: cardData.validTo,
+                status: 'ACTIVE',
+                notes: cardData.notes,
+                anh_vao: "",
+                anh_ra: "",
+                id_thanh_vien: cardData.thanhVien ? parseInt(cardData.thanhVien) : null,
+                mau_sac: cardData.mauSac,
+                so_lan_gui: 0
+            };
+
+            cards.push(newCard);
+            localStorage.setItem('cards', JSON.stringify(cards));
+            localStorage.setItem('nextCardId', (nextId + 1).toString());
+
+            return newCard;
+        }
+
+        // Cập nhật thẻ xe trong localStorage
+        function updateCardInStorage(cardId, cardData) {
+            const cards = JSON.parse(localStorage.getItem('cards') || '[]');
+            const index = cards.findIndex(c => c.id === cardId);
+
+            if (index !== -1) {
+                const updatedCard = {
+                    ...cards[index],
+                    licensePlate: cardData.licensePlate,
+                    vehicleType: cardData.vehicleType,
+                    ownerName: cardData.ownerName,
+                    ownerPhone: cardData.ownerPhone,
+                    ownerAddress: cardData.ownerAddress,
+                    thoi_gian_vao: cardData.validFrom,
+                    thoi_gian_ra: cardData.validTo,
+                    status: cardData.status,
+                    notes: cardData.notes,
+                    id_thanh_vien: cardData.thanhVien ? parseInt(cardData.thanhVien) : null,
+                    mau_sac: cardData.mauSac
+                };
+
+                cards[index] = updatedCard;
+                localStorage.setItem('cards', JSON.stringify(cards));
+
+                return updatedCard;
+            }
+
+            return null;
+        }
+
+        // Xóa thẻ xe từ localStorage
+        function deleteCardFromStorage(cardId) {
+            const cards = JSON.parse(localStorage.getItem('cards') || '[]');
+            const filteredCards = cards.filter(c => c.id !== cardId);
+
+            localStorage.setItem('cards', JSON.stringify(filteredCards));
+
+            return true;
+        }
+
+        // Lấy lịch sử bãi đỗ xe từ localStorage với phân trang và tìm kiếm
+        function getParkingHistoryFromStorage(page = 1, size = 10, searchParams = {}) {
+            const parkingHistory = JSON.parse(localStorage.getItem('parkingHistory') || '[]');
+
+            // Tìm kiếm
+            let filteredHistory = parkingHistory;
+
+            if (searchParams.searchTerm) {
+                const searchTerm = searchParams.searchTerm.toLowerCase();
+                filteredHistory = filteredHistory.filter(history =>
+                    history.licensePlate.toLowerCase().includes(searchTerm) ||
+                    history.ownerName.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            // Lọc theo ngày
+            if (searchParams.dateFrom) {
+                const dateFrom = new Date(searchParams.dateFrom);
+                dateFrom.setHours(0, 0, 0, 0);
+                filteredHistory = filteredHistory.filter(history => {
+                    const timeIn = new Date(history.timeIn);
+                    return timeIn >= dateFrom;
+                });
+            }
+
+            if (searchParams.dateTo) {
+                const dateTo = new Date(searchParams.dateTo);
+                dateTo.setHours(23, 59, 59, 999);
+                filteredHistory = filteredHistory.filter(history => {
+                    const timeIn = new Date(history.timeIn);
+                    return timeIn <= dateTo;
+                });
+            }
+
+            // Phân trang
+            const totalElements = filteredHistory.length;
+            const totalPages = Math.ceil(totalElements / size);
+            const start = (page - 1) * size;
+            const end = Math.min(start + size, totalElements);
+            const paginatedHistory = filteredHistory.slice(start, end);
+
+            return {
+                content: paginatedHistory,
+                totalElements,
+                totalPages,
+                size,
+                number: page - 1,
+                first: page === 1,
+                last: end >= totalElements
+            };
+        }
+
+        // Lấy chi tiết lịch sử bãi đỗ xe theo ID
+        function getParkingHistoryById(historyId) {
+            const parkingHistory = JSON.parse(localStorage.getItem('parkingHistory') || '[]');
+            return parkingHistory.find(history => history.id === historyId);
+        }
+
+        // Tính thời gian đã gửi xe (định dạng giờ:phút)
+        function calculateParkingDuration(timeIn, timeOut) {
+            if (!timeIn || !timeOut) return "Chưa hoàn thành";
+
+            const startTime = new Date(timeIn);
+            const endTime = new Date(timeOut);
+
+            const durationMs = endTime - startTime;
+            const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
+            const durationMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+
+            return `${durationHours} giờ ${durationMinutes} phút`;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Khởi tạo dữ liệu mẫu trong localStorage
+            initLocalStorage();
+
+            // Bỏ qua kiểm tra đăng nhập - tạm thời
+            /* 
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) {
+                window.location.href = 'login.html';
+                return;
+            }
+            */
+
+            document.getElementById('userName').textContent = "Quản trị viên";
+
+            loadCardList();
+
+            setupTabs();
+
+            setupModals();
+
+            document.getElementById('logoutBtn').addEventListener('click', function () {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('userData');
+                window.location.href = 'index.html';
+            });
+
+            document.getElementById('searchBtn').addEventListener('click', function () {
+                loadCardList(1, document.getElementById('searchInput').value);
+            });
+
+            document.getElementById('historySearchBtn').addEventListener('click', function () {
+                const searchParams = {
+                    searchTerm: document.getElementById('historySearchInput').value,
+                    dateFrom: document.getElementById('historyDateFrom').value,
+                    dateTo: document.getElementById('historyDateTo').value
+                };
+                loadParkingHistory(1, searchParams);
+            });
+
+            document.getElementById('newCardForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+                createNewCard();
+            });
+
+            document.getElementById('editCardForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+                updateCard();
+            });
+
+            loadMembersToDropdowns();
+
+            document.getElementById('closeHistoryModal').addEventListener('click', function () {
+                document.getElementById('historyDetailModal').style.display = 'none';
+            });
+
+            document.getElementById('closeDetailBtn').addEventListener('click', function () {
+                document.getElementById('historyDetailModal').style.display = 'none';
+            });
+        });
+
+        function loadMembersToDropdowns() {
+            const members = JSON.parse(localStorage.getItem('members') || '[]');
+            const newMemberSelect = document.getElementById('memberId');
+            const editMemberSelect = document.getElementById('editThanhVien');
+
+            while (newMemberSelect.options.length > 1) {
+                newMemberSelect.options.remove(1);
+            }
+
+            while (editMemberSelect.options.length > 1) {
+                editMemberSelect.options.remove(1);
+            }
+
+            members.forEach(member => {
+                if (member.is_active) {
+                    const newOption = new Option(member.ho_ten, member.id);
+                    const editOption = new Option(member.ho_ten, member.id);
+
+                    newMemberSelect.add(newOption);
+                    editMemberSelect.add(editOption);
+                }
+            });
+        }
+
+        // Thiết lập tab
+        function setupTabs() {
+            const tabItems = document.querySelectorAll('.tab-item');
+            tabItems.forEach(tab => {
+                tab.addEventListener('click', function () {
+                    const tabId = this.getAttribute('data-tab');
+
+                    document.querySelectorAll('.tab-item').forEach(item => item.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+
+                    if (tabId === 'parkingHistory') {
+                        loadParkingHistory();
+                    }
+                });
+            });
+        }
+
+        // Thiết lập modal
+        function setupModals() {
+            document.getElementById('closeEditModal').addEventListener('click', function () {
+                document.getElementById('editCardModal').style.display = 'none';
+            });
+
+            document.getElementById('cancelEditBtn').addEventListener('click', function () {
+                document.getElementById('editCardModal').style.display = 'none';
+            });
+
+            window.addEventListener('click', function (event) {
+                const modal = document.getElementById('editCardModal');
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        // Hiển thị thông báo
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertElement = document.createElement('div');
+            alertElement.className = `alert alert-${type}`;
+            alertElement.textContent = message;
+
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alertElement);
+
+            setTimeout(() => {
+                alertElement.remove();
+            }, 5000);
+        }
+
+        // Tải danh sách thẻ xe
+        function loadCardList(page = 1, searchTerm = '') {
+            const tableBody = document.getElementById('cardTableBody');
+            const pagination = document.getElementById('pagination');
+
+            tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Đang tải dữ liệu...</td></tr>';
+
+            // Lấy dữ liệu từ localStorage
+            const data = getCardsFromStorage(page, 10, searchTerm);
+
+            if (data.content && data.content.length > 0) {
+                tableBody.innerHTML = '';
+
+                data.content.forEach(card => {
+                    const row = document.createElement('tr');
+
+                    const issueDate = new Date(card.issueDate).toLocaleDateString('vi-VN');
+
+                    let statusBadge = '';
+                    switch (card.status) {
+                        case 'ACTIVE':
+                            statusBadge = '<span class="badge badge-success">Đang hoạt động</span>';
+                            break;
+                        case 'EXPIRED':
+                            statusBadge = '<span class="badge badge-warning">Đã hoàn thành</span>';
+                            break;
+                        case 'SUSPENDED':
+                            statusBadge = '<span class="badge badge-warning">Tạm khóa</span>';
+                            break;
+                        case 'CANCELED':
+                            statusBadge = '<span class="badge badge-danger">Đã hủy</span>';
+                            break;
+                        default:
+                            statusBadge = '<span class="badge">' + card.status + '</span>';
+                    }
+
+                    let vehicleType = '';
+                    switch (card.vehicleType) {
+                        case 'CAR':
+                            vehicleType = 'Ô tô';
+                            break;
+                        case 'MOTORCYCLE':
+                            vehicleType = 'Xe máy';
+                            break;
+                        case 'TRUCK':
+                            vehicleType = 'Xe tải';
+                            break;
+                        default:
+                            vehicleType = 'Khác';
+                    }
+
+                    row.innerHTML = `
+                    <td>${card.id}</td>
+                    <td>${card.licensePlate}</td>
+                    <td>${card.ownerName}</td>
+                    <td>${vehicleType}</td>
+                    <td>${issueDate}</td>
+                    <td>${statusBadge}</td>
+                    <td class="action-btns">
+                        <button class="btn btn-primary btn-sm" onclick="openEditModal(${card.id})">Sửa</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteCard(${card.id})">Xóa</button>
+                    </td>
+                `;
+
+                    tableBody.appendChild(row);
+                });
+
+                // Tạo phân trang
+                createPagination(data.totalPages, data.number + 1, searchTerm);
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Không có dữ liệu</td></tr>';
+                pagination.innerHTML = '';
+            }
+        }
+
+        // Tạo phân trang
+        function createPagination(totalPages, currentPage, searchTerm) {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+
+            if (totalPages <= 1) return;
+
+            if (currentPage > 1) {
+                const prevBtn = document.createElement('button');
+                prevBtn.textContent = 'Trước';
+                prevBtn.addEventListener('click', () => loadCardList(currentPage - 1, searchTerm));
+                pagination.appendChild(prevBtn);
+            }
+
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, startPage + 4);
+
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.textContent = i;
+                if (i === currentPage) {
+                    pageBtn.classList.add('active');
+                }
+                pageBtn.addEventListener('click', () => loadCardList(i, searchTerm));
+                pagination.appendChild(pageBtn);
+            }
+
+            if (currentPage < totalPages) {
+                const nextBtn = document.createElement('button');
+                nextBtn.textContent = 'Sau';
+                nextBtn.addEventListener('click', () => loadCardList(currentPage + 1, searchTerm));
+                pagination.appendChild(nextBtn);
+            }
+        }
+
+        function openEditModal(cardId) {
+            const card = getCardById(cardId);
+            if (!card) {
+                showAlert('Không tìm thấy thông tin thẻ xe', 'danger');
+                return;
+            }
+
+            document.getElementById('editCardId').value = card.id;
+            document.getElementById('editLicensePlate').value = card.licensePlate;
+            document.getElementById('editVehicleType').value = card.vehicleType;
+            document.getElementById('editOwnerName').value = card.ownerName;
+            document.getElementById('editPhoneNumber').value = card.ownerPhone || '';
+            document.getElementById('editThanhVien').value = card.id_thanh_vien || '';
+            document.getElementById('editValidFrom').value = formatDateForInput(card.thoi_gian_vao);
+            document.getElementById('editValidTo').value = formatDateForInput(card.thoi_gian_ra);
+            document.getElementById('editStatus').checked = card.status === 'ACTIVE';
+            document.getElementById('editNotes').value = card.notes || '';
+
+            // Hiển thị modal
+            document.getElementById('editCardModal').style.display = 'block';
+
+            // Debug info
+            console.log("Đang chỉnh sửa thẻ:", card);
+            console.log("Thành viên ID:", card.id_thanh_vien);
+        }
+
+        // Định dạng ngày tháng cho input date
+        function formatDateForInput(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toISOString().split('.')[0]; // Format YYYY-MM-DDTHH:MM:SS
+        }
+
+        // Tạo thẻ xe mới
+        function createNewCard() {
+            const licensePlate = document.getElementById('licensePlate').value;
+            const vehicleType = document.getElementById('vehicleType').value;
+            const ownerName = document.getElementById('ownerName').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const memberId = document.getElementById('memberId').value;
+            const validFrom = document.getElementById('validFrom').value;
+            const validTo = document.getElementById('validTo').value;
+            const notes = document.getElementById('notes').value;
+            const isCurrentlyParked = document.getElementById('isCurrentlyParked').value === 'true';
+
+            if (!licensePlate || !vehicleType || !ownerName || !validFrom || !validTo) {
+                showAlert('Vui lòng điền đầy đủ thông tin bắt buộc', 'danger');
+                return;
+            }
+
+            const cards = JSON.parse(localStorage.getItem('cards') || '[]');
+
+            const existingCard = cards.find(card => normalizeLicensePlate(card.licensePlate) === normalizeLicensePlate(licensePlate));
+            if (existingCard) {
+                showAlert(`Biển số ${licensePlate} đã được đăng ký. Vui lòng kiểm tra lại.`, 'danger');
+                return;
+            }
+
+            const nextCardId = parseInt(localStorage.getItem('nextCardId') || '1');
+
+            const validFromDate = new Date(validFrom);
+            const validToDate = new Date(validTo);
+
+            // Tạo thẻ mới
+            const newCard = {
+                id: nextCardId,
+                licensePlate: licensePlate,
+                vehicleType: vehicleType,
+                ownerName: ownerName,
+                phoneNumber: phoneNumber || null,
+                memberId: memberId ? parseInt(memberId) : null,
+                validFrom: validFromDate.toISOString(),
+                validTo: validToDate.toISOString(),
+                notes: notes || null,
+                isActive: true,
+                status: "ACTIVE",
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            console.log("Thẻ mới được tạo:", newCard);
+
+            cards.push(newCard);
+            localStorage.setItem('cards', JSON.stringify(cards));
+            localStorage.setItem('nextCardId', (nextCardId + 1).toString());
+
+            if (isCurrentlyParked) {
+                const parkingLot = JSON.parse(localStorage.getItem('parkingLot') || '[]');
+
+                const entryTime = new Date();
+                const vehicleInfo = {
+                    licensePlate: licensePlate,
+                    entryTime: entryTime.toISOString(),
+                    imageBase64: '',
+                    isMember: true,
+                    vehicleType: vehicleType,
+                    status: 'in',
+                    ownerName: ownerName
+                };
+
+                parkingLot.push(vehicleInfo);
+                localStorage.setItem('parkingLot', JSON.stringify(parkingLot));
+
+                const parkingHistory = JSON.parse(localStorage.getItem('parkingHistory') || '[]');
+                const nextHistoryId = parseInt(localStorage.getItem('nextHistoryId') || '1');
+
+                const historyEntry = {
+                    id: nextHistoryId,
+                    card_id: newCard.id,
+                    licensePlate: licensePlate,
+                    vehicleType: vehicleType,
+                    ownerName: ownerName,
+                    timeIn: entryTime.toISOString(),
+                    timeOut: null,
+                    status: "IN_PROGRESS",
+                    imageIn: null,
+                    imageOut: null,
+                    notes: "Thêm khi cấp thẻ mới",
+                    memberId: memberId ? parseInt(memberId) : null,
+                    memberName: memberId ? getMemberName(parseInt(memberId)) : null
+                };
+
+                parkingHistory.push(historyEntry);
+                localStorage.setItem('parkingHistory', JSON.stringify(parkingHistory));
+                localStorage.setItem('nextHistoryId', (nextHistoryId + 1).toString());
+            }
+
+            showAlert('Thẻ xe đã được tạo thành công!', 'success');
+
+            document.getElementById('newCardForm').reset();
+
+            loadCardList();
+
+            document.querySelector('.tab-item[data-tab="cardList"]').click();
+        }
+
+        function getMemberName(memberId) {
+            const members = JSON.parse(localStorage.getItem('members') || '[]');
+            const member = members.find(m => m.id === memberId);
+            return member ? member.ho_ten : null;
+        }
+
+        function updateCard() {
+            const cardId = parseInt(document.getElementById('editCardId').value);
+            const updatedData = {
+                licensePlate: document.getElementById('editLicensePlate').value,
+                vehicleType: document.getElementById('editVehicleType').value,
+                id_thanh_vien: document.getElementById('editThanhVien').value || null,
+                mauSac: document.getElementById('editMauSac').value,
+                ownerName: document.getElementById('editOwnerName').value,
+                ownerPhone: document.getElementById('editPhoneNumber').value,
+                ownerAddress: document.getElementById('editOwnerAddress').value,
+                validFrom: document.getElementById('editValidFrom').value,
+                validTo: document.getElementById('editValidTo').value,
+                status: document.getElementById('editStatus').checked ? 'ACTIVE' : 'EXPIRED',
+                notes: document.getElementById('editNotes').value
+            };
+
+            if (!updatedData.licensePlate || !updatedData.vehicleType || !updatedData.ownerName || !updatedData.validFrom || !updatedData.validTo) {
+                showAlert('Vui lòng điền đầy đủ thông tin bắt buộc', 'danger');
+                return;
+            }
+
+            const cards = JSON.parse(localStorage.getItem('cards') || '[]');
+            const cardIndex = cards.findIndex(card => card.id === cardId);
+
+            if (cardIndex !== -1) {
+                const validFromDate = new Date(updatedData.validFrom);
+                const validToDate = new Date(updatedData.validTo);
+
+                const updatedCard = {
+                    ...cards[cardIndex],
+                    licensePlate: updatedData.licensePlate,
+                    vehicleType: updatedData.vehicleType,
+                    id_thanh_vien: updatedData.id_thanh_vien ? parseInt(updatedData.id_thanh_vien) : null,
+                    mauSac: updatedData.mauSac,
+                    ownerName: updatedData.ownerName,
+                    ownerPhone: updatedData.ownerPhone,
+                    ownerAddress: updatedData.ownerAddress,
+                    validFrom: validFromDate.toISOString(),
+                    validTo: validToDate.toISOString(),
+                    status: updatedData.status,
+                    isActive: updatedData.status === 'ACTIVE',
+                    notes: updatedData.notes,
+                    updatedAt: new Date().toISOString()
+                };
+
+                cards[cardIndex] = updatedCard;
+                localStorage.setItem('cards', JSON.stringify(cards));
+
+                console.log("Thẻ sau khi cập nhật:", updatedCard);
+
+                showAlert('Cập nhật thẻ xe thành công!', 'success');
+
+                document.getElementById('editCardModal').style.display = 'none';
+                loadCardList();
+            } else {
+                showAlert('Không tìm thấy thẻ xe cần cập nhật', 'danger');
+            }
+        }
+
+        function deleteCard(cardId) {
+            if (!confirm('Bạn có chắc chắn muốn xóa thẻ xe này không?')) {
+                return;
+            }
+
+            const result = deleteCardFromStorage(cardId);
+
+            if (result) {
+                showAlert('Đã xóa thẻ xe thành công!', 'success');
+                loadCardList();
+            } else {
+                showAlert('Lỗi khi xóa thẻ xe', 'danger');
+            }
+        }
+
+        function loadParkingHistory(page = 1, searchParams = {}) {
+            const tableBody = document.getElementById('historyTableBody');
+            const pagination = document.getElementById('historyPagination');
+
+            tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Đang tải dữ liệu...</td></tr>';
+
+            const data = getParkingHistoryFromStorage(page, 10, searchParams);
+
+            if (data.content && data.content.length > 0) {
+                tableBody.innerHTML = '';
+
+                data.content.forEach(history => {
+                    const row = document.createElement('tr');
+
+                    const timeIn = new Date(history.timeIn).toLocaleString('vi-VN');
+                    const timeOut = history.timeOut ? new Date(history.timeOut).toLocaleString('vi-VN') : 'Chưa ra';
+
+                    let statusBadge = '';
+                    switch (history.status) {
+                        case 'COMPLETED':
+                            statusBadge = '<span class="badge badge-success">Đã hoàn thành</span>';
+                            break;
+                        case 'IN_PROGRESS':
+                            statusBadge = '<span class="badge badge-warning">Đang trong bãi</span>';
+                            break;
+                        default:
+                            statusBadge = '<span class="badge">' + history.status + '</span>';
+                    }
+
+                    let vehicleType = '';
+                    switch (history.vehicleType) {
+                        case 'CAR':
+                            vehicleType = 'Ô tô';
+                            break;
+                        case 'MOTORCYCLE':
+                            vehicleType = 'Xe máy';
+                            break;
+                        case 'TRUCK':
+                            vehicleType = 'Xe tải';
+                            break;
+                        default:
+                            vehicleType = 'Khác';
+                    }
+
+                    row.innerHTML = `
+                    <td>${history.id}</td>
+                    <td>${history.licensePlate}</td>
+                    <td>${vehicleType}</td>
+                    <td>${history.ownerName}</td>
+                    <td>${timeIn}</td>
+                    <td>${timeOut}</td>
+                    <td>${statusBadge}</td>
+                    <td class="action-btns">
+                        <button class="btn btn-primary btn-sm" onclick="openHistoryDetailModal(${history.id})">Chi tiết</button>
+                    </td>
+                `;
+
+                    tableBody.appendChild(row);
+                });
+
+                createHistoryPagination(data.totalPages, data.number + 1, searchParams);
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Không có dữ liệu</td></tr>';
+                pagination.innerHTML = '';
+            }
+        }
+
+        // Tạo phân trang cho lịch sử
+        function createHistoryPagination(totalPages, currentPage, searchParams) {
+            const pagination = document.getElementById('historyPagination');
+            pagination.innerHTML = '';
+
+            if (totalPages <= 1) return;
+
+            if (currentPage > 1) {
+                const prevBtn = document.createElement('button');
+                prevBtn.textContent = 'Trước';
+                prevBtn.addEventListener('click', () => loadParkingHistory(currentPage - 1, searchParams));
+                pagination.appendChild(prevBtn);
+            }
+
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, startPage + 4);
+
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.textContent = i;
+                if (i === currentPage) {
+                    pageBtn.classList.add('active');
+                }
+                pageBtn.addEventListener('click', () => loadParkingHistory(i, searchParams));
+                pagination.appendChild(pageBtn);
+            }
+
+            if (currentPage < totalPages) {
+                const nextBtn = document.createElement('button');
+                nextBtn.textContent = 'Sau';
+                nextBtn.addEventListener('click', () => loadParkingHistory(currentPage + 1, searchParams));
+                pagination.appendChild(nextBtn);
+            }
+        }
+
+        // Mở modal chi tiết lịch sử
+        function openHistoryDetailModal(historyId) {
+            const history = getParkingHistoryById(historyId);
+
+            if (history) {
+                let vehicleType = '';
+                switch (history.vehicleType) {
+                    case 'CAR':
+                        vehicleType = 'Ô tô';
+                        break;
+                    case 'MOTORCYCLE':
+                        vehicleType = 'Xe máy';
+                        break;
+                    case 'TRUCK':
+                        vehicleType = 'Xe tải';
+                        break;
+                    default:
+                        vehicleType = 'Khác';
+                }
+
+                const timeIn = new Date(history.timeIn).toLocaleString('vi-VN');
+                const timeOut = history.timeOut ? new Date(history.timeOut).toLocaleString('vi-VN') : 'Chưa ra';
+
+                const parkingDuration = calculateParkingDuration(history.timeIn, history.timeOut);
+
+                document.getElementById('detailLicensePlate').textContent = history.licensePlate;
+                document.getElementById('detailVehicleType').textContent = vehicleType;
+                document.getElementById('detailOwnerName').textContent = history.ownerName;
+                document.getElementById('detailMemberName').textContent = history.memberName || 'Không có';
+                document.getElementById('detailTimeIn').textContent = timeIn;
+                document.getElementById('detailTimeOut').textContent = timeOut;
+                document.getElementById('detailParkingDuration').textContent = parkingDuration;
+                document.getElementById('detailNotes').textContent = history.notes || 'Không có ghi chú';
+
+                if (history.imageIn) {
+                    document.getElementById('detailImageIn').innerHTML = `<img src="/static/images/${history.imageIn}" alt="Ảnh vào">`;
+                } else {
+                    document.getElementById('detailImageIn').innerHTML = '<p>Không có ảnh</p>';
+                }
+
+                if (history.imageOut) {
+                    document.getElementById('detailImageOut').innerHTML = `<img src="/static/images/${history.imageOut}" alt="Ảnh ra">`;
+                } else {
+                    document.getElementById('detailImageOut').innerHTML = '<p>Không có ảnh</p>';
+                }
+
+                document.getElementById('historyDetailModal').style.display = 'block';
+            } else {
+                showAlert('Không tìm thấy thông tin lịch sử', 'danger');
+            }
+        }
+    </script>
+</body>
+
+</html>

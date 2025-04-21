@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống nhận dạng biển số xe</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-section img {
+            width: 40px;
+            margin-right: 10px;
+        }
+
+        .logo-section h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+        }
+
+        .login-btn,
+        .admin-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 15px;
+            text-decoration: none;
+        }
+
+        .login-btn:hover,
+        .admin-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            max-width: 1000px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-image {
+            height: 180px;
+            overflow: hidden;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .card-text {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .card-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .card-button:hover {
+            background-color: #2980b9;
+        }
+
+        .intro-text {
+            text-align: center;
+            max-width: 800px;
+            margin-bottom: 40px;
+        }
+
+        .intro-title {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .intro-subtitle {
+            font-size: 16px;
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        .footer {
+            background-color: #34495e;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .card-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .card {
+                width: 90%;
+                max-width: 400px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo-section">
+            <img src="https://img.icons8.com/color/96/000000/car-badge.png" alt="Logo">
+            <h1>Hệ thống nhận dạng biển số xe </h1>
+            <h1>Bãi đỗ xe</h1>
+        </div>
+        <div class="user-section">
+            <a href="login.html" class="login-btn">Đăng nhập</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="intro-text">
+            <h2 class="intro-title">Chào mừng đến với hệ thống nhận dạng biển số xe thông minh</h2>
+            <p class="intro-subtitle">
+                Hệ thống của chúng tôi sử dụng trí tuệ nhân tạo để nhận dạng và quản lý biển số xe một cách chính xác và
+                hiệu quả.
+            </p>
+        </div>
+
+        <div class="card-container">
+            <div class="card">
+                <div class="card-image">
+                    <img src="https://img.freepik.com/free-photo/security-camera-footage-car-license-plate-recognition_53876-138188.jpg"
+                        alt="Nhận dạng biển số">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Nhận dạng biển số xe</h3>
+                    <p class="card-text">
+                        Tải lên hình ảnh hoặc sử dụng camera để nhận dạng biển số xe một cách nhanh chóng và chính xác.
+                    </p>
+                    <a href="/web" class="card-button">Bắt đầu nhận dạng</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-image">
+                    <img src="https://img.freepik.com/free-vector/car-parking-concept-illustration_114360-9018.jpg"
+                        alt="Quản lý thẻ xe">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Quản lý thẻ xe</h3>
+                    <p class="card-text">
+                        Dành cho quản trị viên - Quản lý thông tin thẻ xe, chủ sở hữu và các quyền truy cập.
+                    </p>
+                    <a href="/admin" class="card-button">Quản lý thẻ xe</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-image">
+                    <img src="https://img.freepik.com/free-vector/faqs-concept-illustration_114360-5245.jpg"
+                        alt="Trợ giúp và hướng dẫn">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Trợ giúp & Hướng dẫn</h3>
+                    <p class="card-text">
+                        Xem hướng dẫn sử dụng hệ thống, các câu hỏi thường gặp và thông tin hỗ trợ.
+                    </p>
+                    <a href="#" class="card-button">Xem hướng dẫn</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2025 Hệ thống nhận dạng biển số xe. Phát triển bởi <a>Nhóm Tiến Đạt</a>.</p>
+        <p>Trường Đại học Giao thông vận tải tp Hồ Chí Minh</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const authToken = localStorage.getItem('authToken');
+            if (authToken) {
+                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                const userSection = document.querySelector('.user-section');
+
+                userSection.innerHTML = '';
+
+                if (userData.name) {
+                    const userNameSpan = document.createElement('span');
+                    userNameSpan.textContent = `Xin chào, ${userData.name}`;
+                    userNameSpan.style.marginRight = '15px';
+                    userSection.appendChild(userNameSpan);
+                }
+
+                const adminLink = document.createElement('a');
+                adminLink.href = '/admin';
+                adminLink.className = 'admin-btn';
+                adminLink.textContent = 'Quản lý';
+                userSection.appendChild(adminLink);
+
+                const logoutBtn = document.createElement('a');
+                logoutBtn.href = '#';
+                logoutBtn.className = 'login-btn';
+                logoutBtn.textContent = 'Đăng xuất';
+                logoutBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('userData');
+                    window.location.href = '/';
+                });
+                userSection.appendChild(logoutBtn);
+            }
+        });
+    </script>
+</body>
+
+</html>

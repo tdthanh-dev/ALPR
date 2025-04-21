@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhận dạng biển số xe</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        .tab button.active {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            animation: fadeEffect 1s;
+        }
+
+        @keyframes fadeEffect {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .result {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .plate-info {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .preview-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .preview-box {
+            flex: 1;
+            margin-right: 10px;
+            text-align: center;
+        }
+
+        .preview-box img,
+        .preview-box video,
+        .preview-box canvas {
+            max-width: 100%;
+            max-height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .loading img {
+            width: 50px;
+            height: 50px;
+        }
+
+        #errorMessage {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .camera-container {
+            display: none;
+        }
+
+        .camera-controls {
+            display: none;
+        }
+
+        #cameraPreview,
+        #exitCameraPreview {
+            display: none;
+        }
+
+        #captureCanvas,
+        #exitCaptureCanvas {
+            display: none;
+        }
+
+        #capturedImagePreview,
+        #exitCapturedImagePreview {
+            display: none;
+        }
+
+        .permission-alert {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Hệ thống nhận dạng biển số xe</h1>
+
+    <div class="container">
+        <div class="tab">
+            <button class="tablinks active" onclick="openTab(event, 'fileUpload')">Xe vào bãi</button>
+            <button class="tablinks" onclick="openTab(event, 'carExit')">Xe ra bãi</button>
+            <button class="tablinks" onclick="openTab(event, 'parkingList')">Danh sách xe trong bãi</button>
+        </div>
+
+        <div id="fileUpload" class="tabcontent" style="display: block;">
+            <h3>Xe vào bãi</h3>
+            <div class="form-group">
+                <label for="imageFile">Chụp ảnh biển số xe vào bãi (JPG, PNG)</label>
+                <input type="file" id="imageFile" accept="image/jpeg, image/png" onchange="previewImage()">
+            </div>
+
+            <button type="button" onclick="toggleCamera('entry')" style="background-color: #27ae60; display: none;">Bật
+                camera</button>
+
+            <div id="entryPermissionAlert" class="permission-alert">
+                <p><strong>Cần cấp quyền camera:</strong> Vui lòng chấp nhận yêu cầu truy cập camera từ trình duyệt để
+                    sử dụng tính năng này.</p>
+                <p>Nếu bạn đã từ chối quyền, vui lòng làm mới trang và chấp nhận yêu cầu hoặc cấu hình lại quyền camera
+                    trong cài đặt trình duyệt.</p>
+            </div>
+
+            <div class="camera-container" id="entryCameraContainer" style="display: none;">
+                <video id="cameraPreview" autoplay playsinline></video>
+                <canvas id="captureCanvas"></canvas>
+                <img id="capturedImagePreview" alt="Ảnh đã chụp">
+
+                <div class="camera-controls">
+                    <button id="captureButton" onclick="captureAndUpload('entry')" style="display: none;">Chụp
+                        ảnh</button>
+                    <button id="retakeButton" onclick="retakeImage('entry')"
+                        style="display: none; background-color: #e67e22;">Chụp lại</button>
+                    <button id="useImageButton" onclick="useImage('entry')"
+                        style="display: none; background-color: #2ecc71;">Sử dụng ảnh này</button>
+                </div>
+            </div>
+
+            <div class="preview-container">
+                <div class="preview-box">
+                    <p>Xem trước ảnh</p>
+                    <img id="imagePreview" src="/api/placeholder/400/320" alt="Xem trước ảnh">
+                </div>
+            </div>
+
+            <button onclick="uploadImage('in')">Quét biển số và cho xe vào bãi</button>
+        </div>
+
+        <div id="carExit" class="tabcontent">
+            <h3>Xe ra bãi</h3>
+            <div class="form-group">
+                <label for="exitImageFile">Chụp ảnh biển số xe ra bãi (JPG, PNG)</label>
+                <input type="file" id="exitImageFile" accept="image/jpeg, image/png" onchange="previewExitImage()">
+            </div>
+
+            <button type="button" onclick="toggleCamera('exit')" style="background-color: #27ae60; display: none;">Bật
+                camera</button>
+
+            <div id="exitPermissionAlert" class="permission-alert">
+                <p><strong>Cần cấp quyền camera:</strong> Vui lòng chấp nhận yêu cầu truy cập camera từ trình duyệt để
+                    sử dụng tính năng này.</p>
+                <p>Nếu bạn đã từ chối quyền, vui lòng làm mới trang và chấp nhận yêu cầu hoặc cấu hình lại quyền camera
+                    trong cài đặt trình duyệt.</p>
+            </div>
+
+            <div class="camera-container" id="exitCameraContainer" style="display: none;">
+                <video id="exitCameraPreview" autoplay playsinline></video>
+                <canvas id="exitCaptureCanvas"></canvas>
+                <img id="exitCapturedImagePreview" alt="Ảnh đã chụp">
+
+                <div class="camera-controls">
+                    <button id="exitCaptureButton" onclick="captureAndUpload('exit')" style="display: none;">Chụp
+                        ảnh</button>
+                    <button id="exitRetakeButton" onclick="retakeImage('exit')"
+                        style="display: none; background-color: #e67e22;">Chụp lại</button>
+                    <button id="exitUseImageButton" onclick="useImage('exit')"
+                        style="display: none; background-color: #2ecc71;">Sử dụng ảnh này</button>
+                </div>
+            </div>
+
+            <div class="preview-container">
+                <div class="preview-box">
+                    <p>Xem trước ảnh</p>
+                    <img id="exitImagePreview" src="/api/placeholder/400/320" alt="Xem trước ảnh">
+                </div>
+            </div>
+
+            <button onclick="uploadImage('out')">Quét biển số và cho xe ra bãi</button>
+        </div>
+
+        <div id="parkingList" class="tabcontent">
+            <h3>Danh sách xe trong bãi</h3>
+            <div class="search-box" style="margin-bottom: 15px;">
+                <input type="text" id="searchInput" placeholder="Tìm kiếm biển số..."
+                    style="padding: 8px; width: 300px;">
+                <button onclick="searchVehicles()" style="margin-left: 10px;">Tìm kiếm</button>
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Biển số</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Thời gian vào</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Loại xe</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Trạng thái</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="vehicleTableBody">
+                    <!-- Dữ liệu xe sẽ được thêm vào đây -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="errorMessage"></div>
+
+        <div class="loading" id="loadingIndicator">
+            <p>Đang xử lý...</p>
+            <svg width="50" height="50" viewBox="0 0 50 50">
+                <circle cx="25" cy="25" r="20" fill="none" stroke="#3498db" stroke-width="5"
+                    stroke-dasharray="31.4 31.4">
+                    <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 25 25"
+                        to="360 25 25" dur="1s" repeatCount="indefinite" />
+                </circle>
+            </svg>
+        </div>
+
+        <div class="result" id="resultContainer" style="display: none;">
+            <h2>Kết quả nhận dạng</h2>
+            <div id="resultContent"></div>
+        </div>
+    </div>
+
+    <script>
+
+        // Dữ liệu mẫu cho thẻ thành viên
+        const sampleMembers = [
+            {
+                id: 1,
+                licensePlate: "29A-12345",
+                ownerName: "Nguyễn Văn A",
+                vehicleType: "CAR",
+                isMember: true
+            },
+            {
+                id: 2,
+                licensePlate: "30A-54321",
+                ownerName: "Trần Thị B",
+                vehicleType: "MOTORCYCLE",
+                isMember: true
+            },
+            {
+                id: 3,
+                licensePlate: "31A-98765",
+                ownerName: "Lê Văn C",
+                vehicleType: "CAR",
+                isMember: true
+            }
+        ];
+
+        // Giá tiền theo loại xe (đơn vị: VND/giờ)
+        const priceRates = {
+            CAR: 20000,         // 20k/giờ cho ô tô
+            MOTORCYCLE: 5000,   // 5k/giờ cho xe máy
+            TRUCK: 30000,       // 30k/giờ cho xe tải
+            OTHER: 10000        // 10k/giờ cho các loại xe khác
+        };
+
+        // Khởi tạo dữ liệu trong localStorage
+        function initLocalStorage() {
+            // Khởi tạo danh sách thành viên
+            if (!localStorage.getItem('members')) {
+                localStorage.setItem('members', JSON.stringify(sampleMembers));
+            }
+
+            // Khởi tạo danh sách xe trong bãi
+            if (!localStorage.getItem('parkingLot')) {
+                localStorage.setItem('parkingLot', JSON.stringify([]));
+            }
+
+            // Khởi tạo lịch sử xe ra vào
+            if (!localStorage.getItem('parkingHistory')) {
+                localStorage.setItem('parkingHistory', JSON.stringify([]));
+            }
+        }
+
+        // Khởi tạo khi trang tải
+        document.addEventListener('DOMContentLoaded', function () {
+            initLocalStorage();
+            loadParkingLot();
+        });
+
+        // Mở tab
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+
+            // Dừng camera nếu chuyển sang tab khác
+            if (tabName !== 'cameraUpload' && stream) {
+                stopCamera();
+            }
+
+            if (tabName === 'parkingList') {
+                loadParkingLot();
+            }
+        }
+
+        function previewImage() {
+            const file = document.getElementById('imageFile').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('imagePreview').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function previewExitImage() {
+            const file = document.getElementById('exitImageFile').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('exitImagePreview').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Hiển thị lỗi
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            console.error(message); // Ghi log lỗi ra console để debug
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
+
+        // Hiển thị thông báo thành công
+        function showSuccess(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.style.color = '#2ecc71';
+            errorElement.style.display = 'block';
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+                errorElement.style.color = '#e74c3c';
+            }, 5000);
+        }
+
+        // Tải ảnh lên và xử lý xe vào/ra
+        function uploadImage(type) {
+            const fileId = type === 'in' ? 'imageFile' : 'exitImageFile';
+            const fileInput = document.getElementById(fileId);
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showError("Vui lòng chọn một ảnh để tải lên");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('image', file);
+
+            document.getElementById('loadingIndicator').style.display = 'block';
+            document.getElementById('resultContainer').style.display = 'none';
+
+            // Gửi yêu cầu đến API
+            fetch('/detect_license_plate', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Lỗi kết nối đến máy chủ');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    displayResults(data);
+
+                    if (data.status === 'success' && data.plates_count > 0) {
+                        const licensePlate = data.plates[0].formatted_text;
+
+                        if (type === 'in') {
+                            processVehicleEntry(licensePlate, data.plates[0].crop_base64);
+                        } else {
+                            processVehicleExit(licensePlate);
+                        }
+                    } else {
+                        showError("Không nhận dạng được biển số xe");
+                    }
+                })
+                .catch(error => {
+                    showError("Lỗi: " + error.message);
+                })
+                .finally(() => {
+                    document.getElementById('loadingIndicator').style.display = 'none';
+                });
+        }
+
+        // Cải thiện hàm định dạng thời gian
+        function formatDateTime(isoString) {
+            if (!isoString) return 'N/A';
+
+            try {
+                const date = new Date(isoString);
+                if (isNaN(date.getTime())) return 'Thời gian không hợp lệ';
+
+                return new Intl.DateTimeFormat('vi-VN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                }).format(date);
+            } catch (e) {
+                console.error("Lỗi định dạng thời gian:", e);
+                return 'Lỗi thời gian';
+            }
+        }
+
+        function calculateParkingDuration(startTime, endTime = null) {
+            try {
+                const start = new Date(startTime);
+                const end = endTime ? new Date(endTime) : new Date();
+
+                if (isNaN(start.getTime())) return "N/A";
+
+                const durationMs = end - start;
+                if (durationMs < 0) return "0 phút";
+
+                const hours = Math.floor(durationMs / (1000 * 60 * 60));
+                const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                if (hours > 0) {
+                    return `${hours} giờ ${minutes} phút`;
+                } else {
+                    return `${minutes} phút`;
+                }
+            } catch (e) {
+                console.error("Lỗi tính thời gian đỗ xe:", e);
+                return "N/A";
+            }
+        }
+
+        // Cập nhật hàm xử lý xe vào bãi
+        function processVehicleEntry(licensePlate, imageBase64) {
+            const parkingLot = JSON.parse(localStorage.getItem('parkingLot') || '[]');
+
+            // Kiểm tra xem xe đã có trong bãi chưa
+            const existingVehicle = parkingLot.find(v => normalizeLicensePlate(v.licensePlate) === normalizeLicensePlate(licensePlate));
+            if (existingVehicle) {
+                showError(`Xe biển số ${licensePlate} đã có trong bãi!`);
+                return;
+            }
+
+            // Kiểm tra xem xe có đăng ký thẻ hay không
+            const cardInfo = checkCardRegistration(licensePlate);
+            const hasRegisteredCard = cardInfo.isRegistered;
+
+            // Kiểm tra từ danh sách thành viên cũ
+            const members = JSON.parse(localStorage.getItem('members') || '[]');
+            const isMember = members.some(m => normalizeLicensePlate(m.licensePlate) === normalizeLicensePlate(licensePlate)) || hasRegisteredCard;
+
+            const entryTime = new Date().toISOString();
+            const vehicleInfo = {
+                licensePlate: licensePlate,
+                entryTime: entryTime,
+                imageBase64: imageBase64,
+                isMember: isMember,
+                vehicleType: determineVehicleType(licensePlate, members),
+                status: 'in',
+                ownerName: cardInfo.isRegistered ? cardInfo.card.ownerName : 'Khách vãng lai'
+            };
+
+            parkingLot.push(vehicleInfo);
+            localStorage.setItem('parkingLot', JSON.stringify(parkingLot));
+
+            updateParkingHistory(vehicleInfo);
+
+            if (isMember) {
+                showSuccess(`Thành viên với biển số ${licensePlate} đã vào bãi thành công! (${formatDateTime(entryTime)})`);
+            } else {
+                showSuccess(`Xe với biển số ${licensePlate} đã vào bãi, bắt đầu tính phí! (${formatDateTime(entryTime)})`);
+            }
+
+            if (document.getElementById('parkingList').style.display === 'block') {
+                loadParkingLot();
+            }
+        }
+
+        function processVehicleExit(licensePlate) {
+            const parkingLot = JSON.parse(localStorage.getItem('parkingLot') || '[]');
+
+            const vehicleIndex = parkingLot.findIndex(v => normalizeLicensePlate(v.licensePlate) === normalizeLicensePlate(licensePlate));
+
+            if (vehicleIndex === -1) {
+                showError(`Không tìm thấy xe biển số ${licensePlate} trong bãi!`);
+                return;
+            }
+
+            const vehicle = parkingLot[vehicleIndex];
+            const exitTime = new Date().toISOString();
+
+            try {
+                const entryTime = new Date(vehicle.entryTime);
+                const exitDateTime = new Date(exitTime);
+
+                const parkingHours = (exitDateTime - entryTime) / (1000 * 60 * 60);
+
+                let fee = 0;
+                if (!vehicle.isMember) {
+                    fee = calculateParkingFee(vehicle.vehicleType, parkingHours);
+                }
+
+                vehicle.exitTime = exitTime;
+                vehicle.parkingDuration = parkingHours;
+                vehicle.fee = fee;
+                vehicle.status = 'out';
+
+                parkingLot.splice(vehicleIndex, 1);
+                localStorage.setItem('parkingLot', JSON.stringify(parkingLot));
+
+                updateParkingHistory(vehicle);
+
+                if (vehicle.isMember) {
+                    showSuccess(`Thành viên với biển số ${licensePlate} đã ra bãi thành công! (${formatDateTime(exitTime)})`);
+                } else {
+                    showSuccess(`Xe với biển số ${licensePlate} đã ra bãi. Phí gửi xe: ${formatCurrency(fee)}! (${formatDateTime(exitTime)})`);
+                }
+
+                if (document.getElementById('parkingList').style.display === 'block') {
+                    loadParkingLot();
+                }
+            } catch (error) {
+                console.error("Lỗi xử lý thời gian:", error);
+                showError(`Lỗi xử lý thời gian cho xe ${licensePlate}. Vui lòng thử lại.`);
+            }
+        }
+
+        function viewVehicleDetails(licensePlate) {
+            const parkingLot = JSON.parse(localStorage.getItem('parkingLot') || '[]');
+            const vehicle = parkingLot.find(v => normalizeLicensePlate(v.licensePlate) === normalizeLicensePlate(licensePlate));
+
+            if (!vehicle) {
+                showError("Không tìm thấy thông tin xe");
+                return;
+            }
+
+            try {
+                const entryTime = formatDateTime(vehicle.entryTime);
+                const memberStatus = vehicle.isMember ? 'Thành viên' : 'Khách vãng lai';
+
+                let vehicleType = 'Khác';
+                switch (vehicle.vehicleType) {
+                    case 'CAR': vehicleType = 'Ô tô'; break;
+                    case 'MOTORCYCLE': vehicleType = 'Xe máy'; break;
+                    case 'TRUCK': vehicleType = 'Xe tải'; break;
+                }
+
+                const parkingDuration = calculateParkingDuration(vehicle.entryTime);
+
+                let currentFee = 0;
+                if (!vehicle.isMember) {
+                    const now = new Date();
+                    const entry = new Date(vehicle.entryTime);
+                    const parkingHours = (now - entry) / (1000 * 60 * 60);
+                    currentFee = calculateParkingFee(vehicle.vehicleType, parkingHours);
+                }
+
+                const resultContainer = document.getElementById('resultContainer');
+                const resultContent = document.getElementById('resultContent');
+
+                resultContent.innerHTML = `
+                    <div style="padding: 15px; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9;">
+                        <h3>Thông tin xe biển số: ${vehicle.licensePlate}</h3>
+                        <div style="display: flex; margin-bottom: 15px;">
+                            <div style="flex: 1;">
+                                <img src="data:image/jpeg;base64,${vehicle.imageBase64}" 
+                                     alt="Biển số" style="max-width: 100%; max-height: 200px;">
+                            </div>
+                            <div style="flex: 1; padding-left: 15px;">
+                                <p><strong>Chủ xe:</strong> ${vehicle.ownerName || 'Không xác định'}</p>
+                                <p><strong>Loại xe:</strong> ${vehicleType}</p>
+                                <p><strong>Thời gian vào:</strong> ${entryTime}</p>
+                                <p><strong>Trạng thái:</strong> ${memberStatus}</p>
+                                <p><strong>Thời gian đã đỗ:</strong> ${parkingDuration}</p>
+                                ${!vehicle.isMember ? `<p><strong>Phí hiện tại:</strong> ${formatCurrency(currentFee)}</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                resultContainer.style.display = 'block';
+            } catch (error) {
+                console.error("Lỗi hiển thị chi tiết xe:", error);
+                showError("Lỗi hiển thị thông tin xe. Vui lòng thử lại.");
+            }
+        }
+
+        // Tải danh sách xe trong bãi
+        function loadParkingLot(searchTerm = '') {
+            const tableBody = document.getElementById('vehicleTableBody');
+            const parkingLot = JSON.parse(localStorage.getItem('parkingLot') || '[]');
+
+            let filteredVehicles = parkingLot;
+            if (searchTerm) {
+                searchTerm = searchTerm.toLowerCase();
+                filteredVehicles = parkingLot.filter(vehicle =>
+                    vehicle.licensePlate.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            tableBody.innerHTML = '';
+
+            if (filteredVehicles.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="5" style="text-align:center; padding: 10px;">Không có xe nào trong bãi</td>';
+                tableBody.appendChild(row);
+                return;
+            }
+
+            filteredVehicles.forEach(vehicle => {
+                const row = document.createElement('tr');
+
+                const entryTime = formatDateTime(vehicle.entryTime);
+                const memberStatus = vehicle.isMember ?
+                    '<span style="color: green;">Thành viên</span>' :
+                    '<span style="color: blue;">Khách vãng lai</span>';
+
+                let vehicleType = 'Khác';
+                switch (vehicle.vehicleType) {
+                    case 'CAR': vehicleType = 'Ô tô'; break;
+                    case 'MOTORCYCLE': vehicleType = 'Xe máy'; break;
+                    case 'TRUCK': vehicleType = 'Xe tải'; break;
+                }
+
+                row.innerHTML = `
+                    <td style="border: 1px solid #ddd; padding: 8px;">${vehicle.licensePlate}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">${entryTime}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">${vehicleType}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">${memberStatus}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">
+                        <button onclick="viewVehicleDetails('${vehicle.licensePlate}')" style="background-color: #3498db; padding: 5px 10px; margin-right: 5px;">Xem</button>
+                        <button onclick="exitVehicle('${vehicle.licensePlate}')" style="background-color: #e74c3c; padding: 5px 10px;">Xe ra</button>
+                    </td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Tìm kiếm xe trong bãi
+        function searchVehicles() {
+            const searchTerm = document.getElementById('searchInput').value;
+            loadParkingLot(searchTerm);
+        }
+
+        // Cho xe ra bãi từ danh sách
+        function exitVehicle(licensePlate) {
+            if (confirm(`Bạn có chắc muốn cho xe ${licensePlate} ra khỏi bãi không?`)) {
+                processVehicleExit(licensePlate);
+            }
+        }
+
+        // Hiển thị kết quả nhận dạng biển số
+        function displayResults(data) {
+            const resultContainer = document.getElementById('resultContainer');
+            const resultContent = document.getElementById('resultContent');
+
+            resultContent.innerHTML = '';
+
+            if (data.status === 'success') {
+                if (data.plates_count === 0) {
+                    resultContent.innerHTML = '<p>Không phát hiện biển số xe trong ảnh.</p>';
+                } else {
+                    data.plates.forEach((plate, index) => {
+                        const plateDiv = document.createElement('div');
+                        plateDiv.className = 'plate-info';
+
+                        let plateHtml = `
+                            <h3>📌 Biển số ${index + 1}: ${plate.formatted_text}</h3>
+                            <div style="display: flex; margin-bottom: 15px;">
+                                <div style="flex: 1;">
+                                    <img src="data:image/jpeg;base64,${plate.crop_base64}" 
+                                         alt="Biển số" style="max-width: 100%; max-height: 200px;">
+                                </div>
+                                <div style="flex: 1; padding-left: 15px;">
+                                    <p><strong>Biển số đã nhận dạng:</strong> ${plate.formatted_text}</p>
+                                    <p><strong>Dòng trên:</strong> ${plate.top_text}</p>
+                                    <p><strong>Dòng dưới:</strong> ${plate.bottom_text}</p>
+                                    <p><strong>Vị trí biển số:</strong> [${plate.bbox.join(', ')}]</p>
+                                </div>
+                            </div>
+                        `;
+
+                        plateDiv.innerHTML = plateHtml;
+                        resultContent.appendChild(plateDiv);
+                    });
+                }
+            } else {
+                resultContent.innerHTML = `<p>Lỗi: ${data.error || 'Không thể xử lý yêu cầu'}</p>`;
+            }
+
+            resultContainer.style.display = 'block';
+        }
+
+        // Cập nhật lịch sử gửi xe
+        function updateParkingHistory(vehicleInfo) {
+            const history = JSON.parse(localStorage.getItem('parkingHistory') || '[]');
+            history.push(vehicleInfo);
+            localStorage.setItem('parkingHistory', JSON.stringify(history));
+        }
+
+        // Xác định loại xe dựa trên biển số và thông tin thành viên
+        function determineVehicleType(licensePlate, members) {
+            const member = members.find(m => normalizeLicensePlate(m.licensePlate) === normalizeLicensePlate(licensePlate));
+            if (member) {
+                return member.vehicleType;
+            }
+
+            if (licensePlate.startsWith('29') || licensePlate.startsWith('30')) {
+                return "CAR";
+            } else if (licensePlate.startsWith('36')) {
+                return "MOTORCYCLE";
+            } else {
+                return "OTHER";
+            }
+        }
+
+        // Tính phí gửi xe
+        function calculateParkingFee(vehicleType, hours) {
+            const rate = priceRates[vehicleType] || priceRates.OTHER;
+            const roundedHours = Math.ceil(hours);
+            return rate * roundedHours;
+        }
+
+        // Định dạng tiền tệ
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        }
+
+        // Chuẩn hóa biển số xe để so sánh
+        function normalizeLicensePlate(licensePlate) {
+            if (!licensePlate) return '';
+            return licensePlate.toString().replace(/[\s-\.]/g, '').toUpperCase();
+        }
+
+        // Kiểm tra xem biển số có đăng ký thẻ hay không
+        function checkCardRegistration(licensePlate) {
+            try {
+                const normalizedPlate = normalizeLicensePlate(licensePlate);
+                const cards = JSON.parse(localStorage.getItem('cards') || '[]');
+                const card = cards.find(c => normalizeLicensePlate(c.licensePlate) === normalizedPlate);
+
+                if (card) {
+                    return {
+                        isRegistered: true,
+                        card: card
+                    };
+                }
+
+                return {
+                    isRegistered: false,
+                    card: null
+                };
+            } catch (e) {
+                console.error("Lỗi kiểm tra đăng ký thẻ:", e);
+                return {
+                    isRegistered: false,
+                    card: null
+                };
+            }
+        }
+
+    </script>
+</body>
+
+</html>

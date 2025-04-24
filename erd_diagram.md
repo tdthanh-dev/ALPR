@@ -1,4 +1,3 @@
-```mermaid
 erDiagram
     USER {
         int id PK
@@ -62,8 +61,8 @@ erDiagram
         float fee
     }
     
-    USER ||--o{ CARD : "manages"
-    MEMBER ||--o{ CARD : "has"
-    CARD ||--o{ PARKING_HISTORY : "generates"
-    PARKING_LOT ||--o{ PARKING_HISTORY : "records"
-} 
+    USER ||--o{ CARD : "quản lý"
+    MEMBER ||--o{ CARD : "sở hữu"
+    CARD ||--o{ PARKING_HISTORY : "tạo"
+    PARKING_LOT ||--o{ PARKING_HISTORY : "ghi lại"
+    MEMBER ||--o{ PARKING_HISTORY : "liên kết"

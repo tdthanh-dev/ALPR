@@ -59,10 +59,10 @@ erDiagram
         float phi
     }
     
-    NGUOI_DUNG ||--o{ THE_XE : "tạo"
-    THANH_VIEN ||--o{ THE_XE : "sở hữu"
-    THE_XE ||--o{ LICH_SU_GUI_XE : "liên kết"
-    THE_XE ||--|| LUOT_QUET_BIEN_SO : "liên kết"
-    LUOT_QUET_BIEN_SO ||--o{ LICH_SU_GUI_XE : "tạo"
-    THANH_VIEN ||--o{ LICH_SU_GUI_XE : "liên kết"
-}
+    NGUOI_DUNG ||..o{ THE_XE : tạo
+    THANH_VIEN ||..o{ THE_XE : sở_hữu
+    THE_XE ||..o{ LICH_SU_GUI_XE : liên_kết
+    THE_XE ||..|| LUOT_QUET_BIEN_SO : liên_kết
+    LUOT_QUET_BIEN_SO ||..o{ LICH_SU_GUI_XE : tạo
+    THANH_VIEN ||..o{ LICH_SU_GUI_XE : liên_kết
+``` 

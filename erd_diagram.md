@@ -1,68 +1,68 @@
+```mermaid
 erDiagram
-    USER {
-        int id PK
-        string username
-        string password
-        string name
-        string role
+    NGUOI_DUNG {
+        int ma_nguoi_dung PK
+        string ten_dang_nhap
+        string mat_khau
+        string ho_ten
+        string vai_tro
     }
     
-    MEMBER {
-        int id PK
-        string ho_ten
+    THANH_VIEN {
+        int ma_thanh_vien PK
+        string ho_va_ten
         string so_dien_thoai
         string email
-        boolean is_active
+        boolean dang_hoat_dong
     }
     
-    CARD {
-        int id PK
-        string licensePlate
-        string vehicleType
-        string ownerName
-        string ownerPhone
-        string ownerAddress
-        datetime issueDate
-        datetime validFrom
-        datetime validTo
-        string status
-        string notes
-        string color
-        int so_lan_gui
-        boolean isActive
-        int id_thanh_vien FK
+    THE_XE {
+        int ma_the PK
+        string bien_so
+        string loai_xe
+        string ten_chu_so_huu
+        string sdt_chu_so_huu
+        datetime ngay_cap
+        datetime hieu_luc_tu
+        datetime hieu_luc_den
+        string trang_thai
+        boolean dang_hoat_dong
+        int ma_thanh_vien FK
+        int nguoi_tao FK
     }
     
-    PARKING_LOT {
-        string licensePlate PK
-        datetime entryTime
-        string imageBase64
-        boolean isMember
-        string vehicleType
-        string status
-        string ownerName
+    LUOT_QUET_BIEN_SO {
+        string bien_so PK
+        datetime thoi_gian_quet
+        string hinh_anh_base64
+        boolean la_thanh_vien
+        string loai_xe
+        string trang_thai
+        string ten_chu_so_huu
     }
     
-    PARKING_HISTORY {
-        int id PK
-        int card_id FK
-        string licensePlate
-        string vehicleType
-        string ownerName
-        datetime timeIn
-        datetime timeOut
-        string status
-        string imageIn
-        string imageOut
-        string notes
-        int memberId FK
-        string memberName
-        float parkingDuration
-        float fee
+    LICH_SU_GUI_XE {
+        int ma_lich_su PK
+        int ma_the FK
+        string bien_so
+        string loai_xe
+        string ten_chu_so_huu
+        datetime thoi_gian_vao
+        datetime thoi_gian_ra
+        string trang_thai
+        string hinh_anh_vao
+        string hinh_anh_ra
+        string ghi_chu
+        int ma_thanh_vien FK
+        string ten_thanh_vien
+        float thoi_gian_gui
+        float phi
     }
     
-    USER ||--o{ CARD : "quản lý"
-    MEMBER ||--o{ CARD : "sở hữu"
-    CARD ||--o{ PARKING_HISTORY : "tạo"
-    PARKING_LOT ||--o{ PARKING_HISTORY : "ghi lại"
-    MEMBER ||--o{ PARKING_HISTORY : "liên kết"
+    NGUOI_DUNG ||--o{ THE_XE : "tạo"
+    THANH_VIEN ||--o{ THE_XE : "sở hữu"
+    THE_XE ||--o{ LICH_SU_GUI_XE : "liên kết"
+    THE_XE ||--|| LUOT_QUET_BIEN_SO : "liên kết"
+    LUOT_QUET_BIEN_SO ||--o{ LICH_SU_GUI_XE : "tạo"
+    THANH_VIEN ||--o{ LICH_SU_GUI_XE : "liên kết"
+}
